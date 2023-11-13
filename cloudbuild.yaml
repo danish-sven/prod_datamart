@@ -1,0 +1,47 @@
+# Use the official Docker image for Docker commands.
+# This step attempts to pull the latest image for using cache to speed up the build process.
+# Replace 'YOUR_PROJECT_ID' with your actual Google Cloud project ID and 'APP_NAME' with your application name.
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'pull-cache'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull gcr.io/YOUR_PROJECT_ID/APP_NAME:latest || exit 0']
+  
+# Build the Docker image with the tag for your project repository.
+# Uses the cache from the pulled image to speed up the build if it's available.
+# Replace 'APP_NAME' with your application name.
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args: [
+      'build', 
+      '-t', 'gcr.io/YOUR_PROJECT_ID/APP_NAME', 
+      '--cache-from', 'gcr.io/YOUR_PROJECT_ID/APP_NAME:latest', 
+      '.'
+    ]
+
+# Push the Docker image to your Container Registry.
+# Replace 'APP_NAME' with your application name.
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args: ['push', 'gcr.io/YOUR_PROJECT_ID/APP_NAME']
+
+# Deploy the image to Google Cloud Run.
+# Replace 'APP_NAME' with your application name and 'REGION_ID' with your desired deployment region.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'SERVICE_NAME' # Replace with your Google Cloud Run service name.
+    - '--image'
+    - 'gcr.io/YOUR_PROJECT_ID/APP_NAME'
+    - '--region'
+    - 'REGION_ID' # Replace with the target region for deployment, such as 'australia-southeast1'.
+    - '--platform'
+    - 'managed'
+
+# List the images used in the build process.
+# Replace 'YOUR_PROJECT_ID' with your actual Google Cloud project ID and 'APP_NAME' with your application name.
+images:
+  - 'gcr.io/YOUR_PROJECT_ID/APP_NAME'

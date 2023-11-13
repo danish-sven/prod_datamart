@@ -1,0 +1,19 @@
+
+Flask==2.2.5
+Werkzeug==3.0.1
+gunicorn==20.1.0
+google-cloud-logging==3.1.2
+
+google-api-core==2.11.0
+google-auth==2.17.0
+google-cloud-bigquery==2.34.4
+google-cloud-core==2.3.2
+
+google-resumable-media==2.4.1
+googleapis-common-protos==1.59.0
+
+pyasn1==0.4.8
+pyasn1-modules==0.2.8
+python-dateutil==2.8.2
+
+# bigquery-view-analyzer==21.9.0
